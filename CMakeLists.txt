@@ -15,7 +15,7 @@ if(MSVC)
 endif()
 
 # Объявляем библиотеку
-add_library(sequance SHARED "include/sequence/sequence.h" "src/sequence_item.cc")
+add_library(sequance SHARED "include/sequence/sequence.h" "src/sequence_item.cc" "src/sequence_container.cc")
 target_include_directories(sequance PUBLIC "include")
 
 # Подключаем googletest
@@ -25,5 +25,5 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
 # Объявляем тесты
-add_executable(sequance_tests "tests/sequence_item_tests.cc")
+add_executable(sequance_tests "tests/sequence_item_test.cc" "tests/sequence_container_test.cc")
 target_link_libraries(sequance_tests sequance GTest::gtest_main)
