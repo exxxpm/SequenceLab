@@ -29,11 +29,10 @@ SequanceContainer::SequanceContainer(int size) {
 }
 
 SequanceItem& SequanceContainer::operator[](int index) {
-    if (index < 0 || index >= user_size) {
-        throw out_of_range("Index out of range.");
-    }
+    if (index < 0 || index >= user_size) { throw out_of_range("Index out of range.");}
     return *(sequence_array[index]);
 }
+
 
 SequanceItem SequanceContainer::operator[](int index) const {
     if (index < 0 || index >= user_size) {
@@ -79,17 +78,16 @@ void SequanceContainer::insert(int index, SequanceItem& elem) {
 void SequanceContainer::remove(int index) {
     if (index < 0 || index >= user_size) { throw out_of_range("Invalid index."); }
 
-    SequanceItem** ptr = new SequanceItem * [user_size - 1];
-
-    std::copy(sequence_array, sequence_array + index, ptr);
-    std::copy(sequence_array + index + 1, sequence_array + user_size, ptr + index);
-
     delete sequence_array[index];
-    delete[] sequence_array;
 
-    sequence_array = ptr;
+    for (int i = index + 1; i < user_size; i++) {
+        sequence_array[i - 1] = sequence_array[i];
+    }
+
+    sequence_array[user_size - 1] = nullptr;
     user_size--;
 }
+
 
 
 int sequence::max_summ_nth_elem(const SequanceContainer& sequence, int n) {

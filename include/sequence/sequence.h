@@ -1,4 +1,5 @@
 #pragma once
+#include <string>
 namespace sequence {
 	enum SequanceItemType {
 		ARITHMETIC,
@@ -15,13 +16,17 @@ namespace sequence {
 			SequanceItem();
 			SequanceItem(SequanceItemType function_type, double first_number_progression, double step_progression, double denominator_progression);
 			SequanceItemType get_type() const;
+			void set_function_type(SequanceItemType type);
 			double calc_nth_elem(int n);
 			double calc_summ_nth_elem(int n);
-			//double set_first_number_progression();
-			//double set_step_progression();
-			//double set_denominator_progression();
-			//friend std::ostream& operator<<(std::ostream& out, const SequanceItemType& function_type);
-			//friend std::ostream& operator<<(std::ostream& out, const SequanceItem& sequance);
+			double set_first_number_progression(double num);
+			double set_step_progression(double num);
+			double set_denominator_progression(double num);
+			double get_first_number_progression();
+			double get_step_progression();
+			double get_denominator_progression();
+			friend std::ostream& operator<<(std::ostream& out, const SequanceItemType& function_type);
+			friend std::ostream& operator<<(std::ostream& out, const SequanceItem& sequance);
 	};
 
 	class SequanceContainer {
@@ -40,7 +45,6 @@ namespace sequence {
 			SequanceItem operator[](int index) const;
 			SequanceItem& operator[](int index);
 			SequanceContainer& operator=(SequanceContainer arr);
-
 	};
 
 	int max_summ_nth_elem(const SequanceContainer& sequence, int n);
