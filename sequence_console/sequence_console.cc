@@ -12,7 +12,7 @@ using namespace std;
 
 const int MENU_FIRST_LEVEL_SIZE = 3;
 const int MENU_SECOND_LEVEL_SIZE = 4;
-const int MENU_REPLACE = 4;
+const int MENU_REPLACE = 3;
 
 const char* menu_first_level[MENU_FIRST_LEVEL_SIZE] = {
     "Взоимодействие с массивом",
@@ -28,14 +28,12 @@ const char* menu_second_level[MENU_SECOND_LEVEL_SIZE] = {
 };
 
 const char* menu_replace_arithmetic[MENU_REPLACE] = {
-    "Тип: ",
     "Первый член прогрессии: ",
     "Шаг прогрессии: ",
     "Назад",
 };
 
 const char* menu_replace_geometric[MENU_REPLACE] = {
-    "Тип: ",
     "Первый член прогрессии: ",
     "Знаменатель прогрессии: ",
     "Назад",
@@ -94,11 +92,11 @@ int main_menu_logic(const char** menu_items, int menu_size, SequanceContainer& a
         clear_console();
         main_draw_menu(menu_items, menu_size, current_menu_item, arr, current_item, arr_size);
         switch (_getch()) {
-            case 72: current_menu_item--; if (current_menu_item < 0) {current_menu_item = menu_size - 1;} break;
-            case 80: current_menu_item++; if (current_menu_item >= menu_size) { current_menu_item = 0;} break;
-            case 75: return 'l'; break;
-            case 77: return 'r'; break;
-            case 13: return current_menu_item;
+        case 72: current_menu_item--; if (current_menu_item < 0) { current_menu_item = menu_size - 1; } break;
+        case 80: current_menu_item++; if (current_menu_item >= menu_size) { current_menu_item = 0; } break;
+        case 75: return 'l'; break;
+        case 77: return 'r'; break;
+        case 13: return current_menu_item;
         }
     }
 }
@@ -106,27 +104,52 @@ int main_menu_logic(const char** menu_items, int menu_size, SequanceContainer& a
 void draw_menu(const char** menu_items, int menu_size, int current_menu_item, SequanceContainer& arr, int current_item) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE);
-    cout << "Дополнительное Меню\n";
+    cout << "Дополнительное Меню\n Тип: ";
+    SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
+    SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
+    cout << (arr[current_item]->get_type() == 0 ? "ARITHMETIC" : "GEOMETRIC") << endl;
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
     for (int i = 0; i < menu_size; i++) {
         if (i == current_menu_item) {
             cout << "> ";
             cout << menu_items[i];
             SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);
-            switch (i) {
-                case 0: cout << (arr[current_item].get_type() == 0 ? "ARITHMETIC" : "GEOMETRIC") << endl; break;
-                case 1: cout << arr[current_item].get_first_number_progression() << endl; break;
-                case 2: if (arr[current_item].get_type() == ARITHMETIC) {cout << arr[current_item].get_step_progression() << endl;}else { cout << arr[current_item].get_denominator_progression() << endl; } break;
+            auto seq = arr[current_item];
+            auto arith_seq = dynamic_cast<ArithmeticSequance*>(seq.get());
+            auto geom_seq = dynamic_cast<GeometricSequance*>(seq.get());
+            if (arith_seq != nullptr) {
+                switch (i) {
+                    case 0: cout << arith_seq->get_first_number_progression() << endl; break;
+                    case 1: cout << arith_seq->get_step_progression() << endl; break;
+                }
+            }
+            else if (geom_seq != nullptr) {
+                switch (i) {
+                    case 0: cout << geom_seq->get_first_number_progression() << endl; break;
+                    case 1: cout << geom_seq->get_denominator_progression() << endl; break;
+                }
             }
             SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
-        }else{
+        }
+        else {
             cout << "  ";
             cout << menu_items[i];
-            switch (i) {
-                case 0: cout << (arr[current_item].get_type() == 0 ? "ARITHMETIC" : "GEOMETRIC") << endl; break;
-                case 1: cout << arr[current_item].get_first_number_progression() << endl; break;
-                case 2: if (arr[current_item].get_type() == ARITHMETIC) { cout << arr[current_item].get_step_progression() << endl; } else { cout << arr[current_item].get_denominator_progression() << endl; } break;
+            auto seq = arr[current_item];
+            auto arith_seq = dynamic_cast<ArithmeticSequance*>(seq.get());
+            auto geom_seq = dynamic_cast<GeometricSequance*>(seq.get());
+            if (arith_seq != nullptr) {
+                switch (i) {
+                    case 0: cout << arith_seq->get_first_number_progression() << endl; break;
+                    case 1: cout << arith_seq->get_step_progression() << endl; break;
+                }
             }
+            else if (geom_seq != nullptr) {
+                switch (i) {
+                    case 0: cout << geom_seq->get_first_number_progression() << endl; break;
+                    case 1: cout << geom_seq->get_denominator_progression() << endl; break;
+                }
+            }
+            SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
         }
     }
 }
@@ -137,9 +160,9 @@ int menu_logic(const char** menu_items, int menu_size, SequanceContainer& arr, i
         clear_console();
         draw_menu(menu_items, menu_size, current_menu_item, arr, current_item);
         switch (getch()) {
-            case 72: current_menu_item--; if (current_menu_item < 0) { current_menu_item = menu_size - 1; } break;
-            case 80: current_menu_item++; if (current_menu_item >= menu_size) { current_menu_item = 0; } break;
-            case 13: return current_menu_item;
+        case 72: current_menu_item--; if (current_menu_item < 0) { current_menu_item = menu_size - 1; } break;
+        case 80: current_menu_item++; if (current_menu_item >= menu_size) { current_menu_item = 0; } break;
+        case 13: return current_menu_item;
         }
     }
 }
@@ -160,7 +183,8 @@ int input_index(int arr_size) {
             cin.clear();
             clear_console();
             cout << "Неверный индекс или ввод!" << endl;
-        }else{
+        }
+        else {
             flag = false;
         }
     }
@@ -170,16 +194,17 @@ int input_index(int arr_size) {
 //Функции меню первого уровня
 void find_max_index(SequanceContainer& arr) {
     clear_console();
-    if (arr.get_size() == 0) {
+    if (arr.size() == 0) {
         cout << "Возникла ошибка, проверьте заполнен ли массив с данными" << endl;
-    }else{
+    }
+    else {
         int n;
         cout << "Введите n: ";
         cin >> n;
 
         int index = max_summ_nth_elem(arr, n);
-        if (index != -1) {cout << "Последней последовательностью с максимальной суммой первых n элементов, при n = " << n << " является - " << "[" << index << "]" << endl; cout << arr[index];}
-        else {cout << "Возникла ошибка, проверьте заполнен ли массив с данными" << endl;}
+        if (index != -1) { cout << "Последней последовательностью с максимальной суммой первых n элементов, при n = " << n << " является - " << "[" << index << "]" << endl; cout << arr[index]; }
+        else { cout << "Возникла ошибка, проверьте заполнен ли массив с данными" << endl; }
         getch();
     }
 }
@@ -188,13 +213,12 @@ void find_max_index(SequanceContainer& arr) {
 void add_newSequence(SequanceContainer& arr) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     string menu_type[] = { "ARITHMETIC", "GEOMETRIC" };
-    SequanceItemType arr_type[] = { ARITHMETIC, GEOMETRIC };
 
     int current_menu_item = 0;
     int choose = 0;
     bool flag = true;
 
-    int index = input_index(arr.get_size());
+    int index = input_index(arr.size());
 
     while (flag) {
         clear_console();
@@ -218,7 +242,7 @@ void add_newSequence(SequanceContainer& arr) {
         case 13: flag = false; choose = current_menu_item; break;
         }
     }
-    SequanceItem item;
+    clear_console();
     if (choose == 0) {
         double num1 = 0, num2 = 0;
         cout << "Выбранный тип: ARITHMETIC" << endl;
@@ -246,7 +270,7 @@ void add_newSequence(SequanceContainer& arr) {
                 flag_cin2 = false;
             }
         }
-        item = SequanceItem(arr_type[choose], num1, num2, 0);
+        if (index != -1) { arr.insert(make_shared<ArithmeticSequance>(num1, num2)); }
     }
     else {
         double num1, num2 = 0;
@@ -275,95 +299,70 @@ void add_newSequence(SequanceContainer& arr) {
                 flag_cin2 = false;
             }
         }
-        item = SequanceItem(arr_type[choose], num1, 0, num2);
+        if (index != -1) { arr.insert(make_shared<GeometricSequance>(num1, num2)); }
     }
-    if (index != -1) { arr.insert(index, item); }
 }
 
 void del_itemSequence(SequanceContainer& arr, int index) {
-    if(index >= 0){ arr.remove(index); }
+    if (index >= 0) { arr.remove(index); }
 }
 
 void replace_currentSequance(SequanceContainer& arr, int current_item, int arr_size) {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
-    string menu_type[] = { "ARITHMETIC", "GEOMETRIC" };
-    SequanceItemType arr_type[] = { ARITHMETIC, GEOMETRIC };
-
     int current_menu_item = 0;
     int choose = 0;
     bool flag = true;
     bool exit_replace = false;
+
     while (!exit_replace) {
-        if (arr[current_item].get_type() == ARITHMETIC) {
+        SequancePtr current_sequence = arr[current_item];
+
+        if (auto arithmetic_sequence = std::dynamic_pointer_cast<ArithmeticSequance>(current_sequence)) {
             int menu_item = menu_logic(menu_replace_arithmetic, MENU_REPLACE, arr, current_item);
             cout << endl;
+
             switch (menu_item) {
                 case 0:
-                    while (flag) {
-                        clear_current_line();
-                        for (int i = 0; i < 2; i++) {
-                            if (i == current_menu_item) {SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);}
-                            cout << menu_type[i] << "  ";
-                            SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
-                        }
-                        switch (getch()) {
-                            case 75: current_menu_item--; if (current_menu_item < 0) { current_menu_item = 2 - 1; } break;
-                            case 77: current_menu_item++; if (current_menu_item >= 2) { current_menu_item = 0; } break;
-                            case 13: flag = false; choose = current_menu_item; break;
-                        }
-                    }
-                    arr[current_item].set_function_type(arr_type[choose]);
-                    break;
-                case 1: 
+                    arithmetic_sequence = std::dynamic_pointer_cast<ArithmeticSequance>(current_sequence);
                     cout << "Введите новое значение для первого члена прогрессии: ";
                     double new_value_num1;
                     cin >> new_value_num1;
-                    arr[current_item].set_first_number_progression(new_value_num1);
+                    arithmetic_sequence->set_first_number_progression(new_value_num1);
                     break;
-                case 2: 
+
+                case 1:
+                    arithmetic_sequence = std::dynamic_pointer_cast<ArithmeticSequance>(current_sequence);
                     cout << "Введите новое значение для шага прогрессии: ";
                     double new_value_num2;
                     cin >> new_value_num2;
-                    arr[current_item].set_step_progression(new_value_num2);
+                    arithmetic_sequence->set_step_progression(new_value_num2);
                     break;
-                case 3:
+
+                case 2:
                     exit_replace = true;
                     break;
             }
-        }else{
+
+        }
+        else if (auto geometric_sequence = std::dynamic_pointer_cast<GeometricSequance>(current_sequence)) {
             int menu_item = menu_logic(menu_replace_geometric, MENU_REPLACE, arr, current_item);
             cout << endl;
             switch (menu_item) {
                 case 0:
-                    cout << "Введите новый тип прогрессии: ";
-                    while (flag) {
-                        clear_current_line();
-                        for (int i = 0; i < 2; i++) {
-                            if (i == current_menu_item) {SetConsoleTextAttribute(hConsole, FOREGROUND_GREEN);}
-                            cout << menu_type[i] << "  ";
-                            SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
-                        }
-                        switch (getch()) {
-                        case 75: current_menu_item--; if (current_menu_item < 0) { current_menu_item = 2 - 1; } break;
-                        case 77: current_menu_item++; if (current_menu_item >= 2) { current_menu_item = 0; } break;
-                        case 13: flag = false; choose = current_menu_item; break;
-                        }
-                    }
-                    arr[current_item].set_function_type(arr_type[choose]);
+                    geometric_sequence = std::dynamic_pointer_cast<GeometricSequance>(current_sequence);
+                    cout << "Введите новое значение для первого члена прогрессии: ";
+                    double new_value_num1;
+                    cin >> new_value_num1;
+                    geometric_sequence->set_first_number_progression(new_value_num1);
                     break;
                 case 1:
-                    cout << "Введите новое значение для первого члена прогрессии: ";
-                    double new_value_num3;
-                    cin >> new_value_num3;
-                    arr[current_item].set_first_number_progression(new_value_num3);
-                    break;
-                case 2:
+                    geometric_sequence = std::dynamic_pointer_cast<GeometricSequance>(current_sequence);
                     cout << "Введите новое значение для знаменателя прогрессии: ";
                     double new_value_num4;
                     cin >> new_value_num4;
-                    arr[current_item].set_denominator_progression(new_value_num4);
+                    geometric_sequence->set_denominator_progression(new_value_num4);
                     break;
-                case 3:
+                case 2:
                     exit_replace = true;
                     break;
             }
@@ -380,20 +379,22 @@ int main() {
     bool exit_second_level = false;
 
     while (!exit_program) {
-        int menu_item = main_menu_logic(menu_first_level, MENU_FIRST_LEVEL_SIZE, arr, current_item, arr.get_size());
+        int menu_item = main_menu_logic(menu_first_level, MENU_FIRST_LEVEL_SIZE, arr, current_item, arr.size());
         switch (menu_item) {
         case 0:
             clear_console();
             exit_second_level = false;
             while (!exit_second_level) {
-                int menu_item = main_menu_logic(menu_second_level, MENU_SECOND_LEVEL_SIZE, arr, current_item, arr.get_size());
+                int menu_item = main_menu_logic(menu_second_level, MENU_SECOND_LEVEL_SIZE, arr, current_item, arr.size());
                 switch (menu_item) {
-                    case 'l': if (current_item > 0) { current_item--; } break;
-                    case 'r': if (current_item < arr.get_size() - 1) { current_item++; } break;
-                    case 0:   clear_console(); add_newSequence(arr); break;
-                    case 1:   if (arr.get_size() > 0) { if (current_item >= 0) { del_itemSequence(arr, current_item); } if (arr.get_size() > 0) {current_item--;}} else { cout << "Ошибка проверьте заполнен ли массив с данными"; } break;
-                    case 2:   if (arr.get_size() > 0) { clear_console(); replace_currentSequance(arr, current_item, arr.get_size()); } else { break; }
-                    case 3:   exit_second_level = true;  break;
+                case 'l': if (current_item > 0) { current_item--; } break;
+                case 'r': if (current_item < arr.size() - 1) { current_item++; } break;
+                case 0:   clear_console(); add_newSequence(arr); break;
+                case 1:   if (arr.size() > 0) { if (current_item >= 0) { del_itemSequence(arr, current_item); } if (arr.size() > 0) { current_item--; } }
+                          else { cout << "Ошибка проверьте заполнен ли массив с данными"; } break;
+                case 2:   if (arr.size() > 0) { clear_console(); replace_currentSequance(arr, current_item, arr.size()); }
+                          else { break; }
+                case 3:   exit_second_level = true;  break;
                 }
             }
             clear_console();

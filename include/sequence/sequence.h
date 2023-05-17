@@ -1,51 +1,67 @@
 #pragma once
 #include <string>
+#include <memory>
+#include <vector>
 namespace sequence {
-	enum SequanceItemType {
-		ARITHMETIC,
-		GEOMETRIC,
+	class Sequance;
+	using SequancePtr = std::shared_ptr<Sequance>;
+
+	class Sequance{
+		public:
+			virtual ~Sequance() = default;
+			int get_type() const;
+			virtual double calc_nth_elem(int n) const = 0;
+			virtual double calc_summ_nth_elem(int n) const = 0;
+			virtual SequancePtr clone_item() const = 0;
+		protected:
+			Sequance() = default;
+			Sequance(const Sequance&) = default;
+			Sequance& operator=(const Sequance&) = default;
 	};
 
-	class SequanceItem {
+	class ArithmeticSequance : public Sequance{
 		private:
-			SequanceItemType function_type;
 			double first_number_progression;
 			double step_progression;
+		public:
+			ArithmeticSequance(double first_number_progression, double step_progression);
+			void set_first_number_progression(double num);
+			void set_step_progression(double num);
+			double get_first_number_progression() const;
+			double get_step_progression() const;
+			double calc_nth_elem(int n) const override;
+			double calc_summ_nth_elem(int n) const override;
+			SequancePtr clone_item() const override;
+	};
+
+	class GeometricSequance : public Sequance {
+		private:
+			double first_number_progression;
 			double denominator_progression;
 		public:
-			SequanceItem();
-			SequanceItem(SequanceItemType function_type, double first_number_progression, double step_progression, double denominator_progression);
-			SequanceItemType get_type() const;
-			void set_function_type(SequanceItemType type);
-			double calc_nth_elem(int n);
-			double calc_summ_nth_elem(int n);
-			double set_first_number_progression(double num);
-			double set_step_progression(double num);
-			double set_denominator_progression(double num);
-			double get_first_number_progression();
-			double get_step_progression();
-			double get_denominator_progression();
-			friend std::ostream& operator<<(std::ostream& out, const SequanceItemType& function_type);
-			friend std::ostream& operator<<(std::ostream& out, const SequanceItem& sequance);
+			GeometricSequance(double first_number_progression, double denominator_progression);
+			void set_first_number_progression(double num);
+			void set_denominator_progression(double num);
+			double get_first_number_progression() const;
+			double get_denominator_progression() const;
+			double calc_nth_elem(int n) const override;
+			double calc_summ_nth_elem(int n) const override;
+			SequancePtr clone_item() const override;
 	};
 
 	class SequanceContainer {
 		private:
-			SequanceItem** sequence_array;
-			int user_size;
+			std::vector<SequancePtr> sequence_array;
 		public:
-			~SequanceContainer();
-			SequanceContainer(int size);
+			SequanceContainer() = default;
 			SequanceContainer(const SequanceContainer& arr);
-			SequanceContainer() : user_size(0), sequence_array(nullptr) {};
-			int get_size() const;
+			int size() const;
 			void remove(int index);
-			void insert(int index, SequanceItem& elem);
+			void insert(SequancePtr elem);
 			void swap(SequanceContainer& arr);
-			SequanceItem operator[](int index) const;
-			SequanceItem& operator[](int index);
-			SequanceContainer& operator=(SequanceContainer arr);
+			SequancePtr operator[](int index) const;
+			SequanceContainer& operator=(SequanceContainer& arr);
 	};
-
+	std::ostream& operator<<(std::ostream& out, const SequancePtr& ptr);
 	int max_summ_nth_elem(const SequanceContainer& sequence, int n);
 }
