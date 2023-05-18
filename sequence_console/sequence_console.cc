@@ -21,7 +21,7 @@ const char* menu_first_level[MENU_FIRST_LEVEL_SIZE] = {
 };
 
 const char* menu_second_level[MENU_SECOND_LEVEL_SIZE] = {
-    "Добавить запись по указанному индексу",
+    "Добавить запись",
     "Удалить текущую запись",
     "Изменить текущую запись",
     "Назад",
@@ -107,7 +107,7 @@ void draw_menu(const char** menu_items, int menu_size, int current_menu_item, Se
     cout << "Дополнительное Меню\n Тип: ";
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED);
-    cout << (arr[current_item]->get_type() == 0 ? "ARITHMETIC" : "GEOMETRIC") << endl;
+    cout << (typeid(*arr[current_item]) == typeid(ArithmeticSequance) == 0 ? "ARITHMETIC" : "GEOMETRIC") << endl;
     SetConsoleTextAttribute(hConsole, FOREGROUND_BLUE | FOREGROUND_RED | FOREGROUND_GREEN);
     for (int i = 0; i < menu_size; i++) {
         if (i == current_menu_item) {

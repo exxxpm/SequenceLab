@@ -9,7 +9,6 @@ namespace sequence {
 	class Sequance{
 		public:
 			virtual ~Sequance() = default;
-			int get_type() const;
 			virtual double calc_nth_elem(int n) const = 0;
 			virtual double calc_summ_nth_elem(int n) const = 0;
 			virtual SequancePtr clone_item() const = 0;

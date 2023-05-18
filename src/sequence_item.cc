@@ -9,11 +9,6 @@
 using namespace sequence;
 using namespace std;
 
-int Sequance::get_type() const {
-	if (typeid(*this) == typeid(ArithmeticSequance)) {return 0;}
-	else if (typeid(*this) == typeid(GeometricSequance)) {return 1;}
-}
-
 std::ostream& sequence::operator<<(std::ostream& out, const SequancePtr& ptr) {
 	auto arith_seq = dynamic_cast<ArithmeticSequance*>(ptr.get());
 	auto geom_seq = dynamic_cast<GeometricSequance*>(ptr.get());

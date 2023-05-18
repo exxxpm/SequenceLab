@@ -5,6 +5,7 @@ using namespace sequence;
 using namespace std;
 
 SequanceContainer::SequanceContainer(const SequanceContainer& arr) {
+	sequence_array.reserve(arr.size());
 	for (const auto& seq : arr.sequence_array) {
 		sequence_array.push_back(seq->clone_item());
 	}
